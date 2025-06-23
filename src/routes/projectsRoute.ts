@@ -3,7 +3,8 @@ import { body, param } from "express-validator";
 import { ProjectController } from "../controllers/ProjectController";
 import { TaskController } from "../controllers/TaskController";
 import { handleInputErrors } from "../middleware/validation";
-import { projectExists } from "../middleware/projectExists";
+import { projectExists } from "../middleware/projects";
+import { taskBelongsToProject, taskExists } from "../middleware/tasks";
 
 const router = Router()
 
@@ -47,6 +48,8 @@ router.delete("/:id",
 
 // ===== Tasks Route =====
 router.param("projectID", projectExists)
+router.param("taskID", taskExists)
+router.param("taskID", taskBelongsToProject)
 
 router.post("/:projectID/tasks", 
   body("taskName")
@@ -57,8 +60,36 @@ router.post("/:projectID/tasks",
   TaskController.createTask
 )
 
+router.post("/:projectID/tasks/:taskID/status", 
+  param("taskID").isMongoId().withMessage("ID no válido"),
+  body("status")
+    .isIn([ "pending", "onHold", "inProgress", "underReview", "completed" ])
+    .withMessage("El estado de la tarea no es válido. Valores aceptados: pendiente, en espera, en progreso, en revisión, completada"),
+  handleInputErrors,
+  TaskController.updateTaskStatus
+)
+
 router.get("/:projectID/tasks", TaskController.getProjectTasks)
 router.get("/:projectID/tasks/:taskID", 
-  TaskController.getTaskById)
+  param("taskID").isMongoId().withMessage("ID no válido"),
+  handleInputErrors,
+  TaskController.getTaskById
+)
+
+router.put("/:projectID/tasks/:taskID", 
+  param("taskID").isMongoId().withMessage("ID no válido"),
+  body("taskName")
+    .notEmpty().withMessage("El nombre de la tarea no puede ir vacío"),
+  body("description")
+    .notEmpty().withMessage("La descripción es obligatoria"),
+  handleInputErrors,
+  TaskController.udpateTaskById
+)
+
+router.delete("/:projectID/tasks/:taskID", 
+  param("taskID").isMongoId().withMessage("ID no válido"),
+  handleInputErrors,
+  TaskController.deleteTaskById
+)
 
 export default router
