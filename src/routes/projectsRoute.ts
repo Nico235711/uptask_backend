@@ -57,31 +57,8 @@ router.post("/:projectID/tasks",
   TaskController.createTask
 )
 
-router.get("/", ProjectController.getAllProjects)
-
-router.get("/:id", 
-  param("id").isMongoId().withMessage("ID no válido"),
-  handleInputErrors,
-  ProjectController.getProjectById
-)
-
-router.put("/:id", 
-  param("id").isMongoId().withMessage("ID no válido"),
-  body("projectName")
-    .notEmpty().withMessage("El nombre del proyecto no puede ir vacío"),
-  body("clientName")
-    .notEmpty().withMessage("El nombre del cliente no puede ir vacío"),
-  body("description")
-    .notEmpty().withMessage("La descripción es obligatoria"),
-  handleInputErrors,
-  ProjectController.udpateProjectById
-)
-
-router.delete("/:id", 
-  param("id").isMongoId().withMessage("ID no válido"),
-  handleInputErrors,
-  ProjectController.deleteProjectById
-)
-
+router.get("/:projectID/tasks", TaskController.getProjectTasks)
+router.get("/:projectID/tasks/:taskID", 
+  TaskController.getTaskById)
 
 export default router
