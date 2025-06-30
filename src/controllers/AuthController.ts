@@ -12,8 +12,7 @@ export class AuthController {
       // evitar duplicados
       const userExists = await User.findOne({ email });
       if (userExists) {
-        const error = new Error("El usuario ya existe");
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ message: "El usuario ya existe" });
         return;
       }
       // creo el usuario

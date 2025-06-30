@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import "dotenv/config"
 
 const { SMTP_PORT, SMTP_HOST, SMTP_PASSWORD, SMTP_USER } = process.env
 

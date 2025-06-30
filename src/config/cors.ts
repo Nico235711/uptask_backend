@@ -1,4 +1,5 @@
 import { CorsOptions } from "cors";
+import "dotenv/config"
 
 const urlFrontend = process.env.FRONTEND_URL
 
