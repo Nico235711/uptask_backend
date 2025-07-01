@@ -1,4 +1,7 @@
 import { transport } from "../config/nodemailer";
+import "dotenv/config"
+
+const link = `${process.env.FRONTEND_URL}/auth/confirm-account`
 
 interface IEmail {
   email: string;
@@ -13,7 +16,7 @@ export class AuthEmail {
       to: user.email,
       subject: "UpTask - Confimar cuenta",
       text: "UpTask - Confimar cuenta",
-      html: `<p>Hola ${user.name}. Haz click en el siguiente enlace para confirmar tu cuenta: <a href="#">Confirmar cuenta</a></p>
+      html: `<p>Hola ${user.name}. Haz click en el siguiente enlace para confirmar tu cuenta: <a href="${link}">Confirmar cuenta</a></p>
       <p>Tu token de acceso es: ${user.token}. Este token expira en 10 minutos</p>`,
     });
   };

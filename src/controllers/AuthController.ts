@@ -41,8 +41,7 @@ export class AuthController {
       const { token } = req.body;
       const tokenExists = await Token.findOne({ token });
       if (!tokenExists) {
-        const error = new Error("Token no encontrado");
-        res.status(404).json({ error: error.message });
+        res.status(400).json({ message: "Token no válido" });
         return;
       }
       const user = await User.findById(tokenExists.user);
@@ -78,17 +77,42 @@ export class AuthController {
           name: userExists.name,
           token: token.token,
         })
-        const error = new Error("La cuenta no ha sido confirmada, revise su email para confirmarla");
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ message: "La cuenta no ha sido confirmada, revise su email para confirmarla" });
         return;
       }
       const isPassWordCorrect = await comparePassword(password, userExists.password)
       if (!isPassWordCorrect) {
-        const error = new Error("La contraseña es incorrecta");
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ message: "La contraseña es incorrecta" });
         return;
       }
       res.status(201).json("Usuario autenticado");
+    } catch (error) {
+      res.status(500).json({ error: "Hubo un error" });
+    }
+  };
+
+  static requestConfirmationToken = async (req: Request, res: Response) => {
+    try {
+      const { email } = req.body;
+      const userExists = await User.findOne({ email });
+      if (!userExists) {
+        res.status(400).json({ message: "El usuario no existe" });
+        return;
+      }
+      if (userExists.confirmed) {
+        res.status(400).json({ message: "El usuario ya esta confirmado" });
+        return;
+      }
+      const token = new Token();
+      token.token = generateToken();
+      token.user = userExists.id;
+      AuthEmail.sendEmail({
+        email: email,
+        name: userExists.name,
+        token: token.token,
+      });
+      await token.save()
+      res.status(200).json("Hemos enviado un email para que confirme su cuenta");
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
     }

@@ -32,4 +32,10 @@ router.post("/login",
   AuthController.login
 );
 
+router.post("/request-token",
+  body("email").isEmail().withMessage("Formato de email no válido"),
+  handleInputErrors,
+  AuthController.requestConfirmationToken
+);
+
 export default router;
