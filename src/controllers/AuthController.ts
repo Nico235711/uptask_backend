@@ -63,8 +63,12 @@ export class AuthController {
       const { email, password } = req.body;
       const userExists = await User.findOne({ email });
       if (!userExists) {
-        const error = new Error("Usuario no encontrado");
-        res.status(404).json({ error: error.message });
+        res.status(404).json({ message: "Usuario no encontrado" });
+        return;
+      }
+      const isPassWordCorrect = await comparePassword(password, userExists.password)
+      if (!isPassWordCorrect) {
+        res.status(400).json({ message: "La contraseña es incorrecta" });
         return;
       }
       if (!userExists.confirmed) {
@@ -77,12 +81,7 @@ export class AuthController {
           name: userExists.name,
           token: token.token,
         })
-        res.status(400).json({ message: "La cuenta no ha sido confirmada, revise su email para confirmarla" });
-        return;
-      }
-      const isPassWordCorrect = await comparePassword(password, userExists.password)
-      if (!isPassWordCorrect) {
-        res.status(400).json({ message: "La contraseña es incorrecta" });
+        res.status(400).json({ message: "La cuenta no ha sido confirmada, hemos enviado el token de validación a su email" });
         return;
       }
       res.status(201).json("Usuario autenticado");
