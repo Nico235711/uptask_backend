@@ -38,4 +38,10 @@ router.post("/request-token",
   AuthController.requestConfirmationToken
 );
 
+router.post("/forgot-password",
+  body("email").isEmail().withMessage("Formato de email no válido"),
+  handleInputErrors,
+  AuthController.forgotPassword
+);
+
 export default router;

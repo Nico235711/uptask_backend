@@ -105,13 +105,36 @@ export class AuthController {
       const token = new Token();
       token.token = generateToken();
       token.user = userExists.id;
+      await token.save()
       AuthEmail.sendEmail({
         email: email,
         name: userExists.name,
         token: token.token,
       });
-      await token.save()
       res.status(200).json("Hemos enviado un email para que confirme su cuenta");
+    } catch (error) {
+      res.status(500).json({ error: "Hubo un error" });
+    }
+  };
+
+  static forgotPassword = async (req: Request, res: Response) => {
+    try {
+      const { email } = req.body;
+      const userExists = await User.findOne({ email });
+      if (!userExists) {
+        res.status(400).json({ message: "El usuario no existe" });
+        return;
+      }
+      const token = new Token();
+      token.token = generateToken();
+      token.user = userExists.id;
+      AuthEmail.sendPasswordResetToken({
+        email: email,
+        name: userExists.name,
+        token: token.token,
+      });
+      await token.save()
+      res.status(200).json("Hemos enviado un email para que reestablezca su contraseña");
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
     }
