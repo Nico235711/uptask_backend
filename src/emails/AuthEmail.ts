@@ -18,7 +18,7 @@ export class AuthEmail {
       subject: "UpTask - Confimar cuenta",
       text: "UpTask - Confimar cuenta",
       html: `<p>Hola ${user.name}. Haz click en el siguiente enlace para confirmar tu cuenta: <a href="${linkToConfirmAccount}">Confirmar cuenta</a></p>
-      <p>E ingresa el código: ${user.token}. Este token expira en 10 minutos</p>`,
+      <p>E ingresa el código: ${user.token}. Este token expira en 15 minutos</p>`,
     });
   };
 
@@ -29,7 +29,7 @@ export class AuthEmail {
       subject: "UpTask - Establecer nueva contraseña",
       text: "UpTask - Establecer nueva contraseña",
       html: `<p>Hola ${user.name}. Haz click en el siguiente enlace para establecer un nueva contraseña: <a href="${linkToResetPassword}">Establecer nueva contraseña</a></p>
-      <p>E ingresa el código: ${user.token}. Este token expira en 10 minutos</p>`,
+      <p>E ingresa el código: ${user.token}. Este token expira en 15 minutos</p>`,
     });
   };
 }

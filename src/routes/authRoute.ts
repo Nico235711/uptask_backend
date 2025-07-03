@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import { handleInputErrors } from "../middleware/validation";
 import { AuthController } from "../controllers/AuthController";
 
@@ -42,6 +42,24 @@ router.post("/forgot-password",
   body("email").isEmail().withMessage("Formato de email no válido"),
   handleInputErrors,
   AuthController.forgotPassword
+);
+
+router.post("/validate-token",
+  body("token").notEmpty().withMessage("El token es obligatorio"),
+  handleInputErrors,
+  AuthController.validateToken
+);
+
+router.post("/update-password/:token",
+  param("token").isNumeric().withMessage("Token no válido"),
+  body("password")
+    .isLength({ min: 8 })
+    .withMessage("La contraseña debe tener al menos 8 caracteres"),
+  body("password_confirmation")
+    .custom((value, { req }) => value === req.body.password)
+    .withMessage("Las contraseñas no coiciden"),
+  handleInputErrors,
+  AuthController.updatedPasswordWithToken
 );
 
 export default router;
