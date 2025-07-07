@@ -4,6 +4,7 @@ import { comparePassword, hashPassword } from "../utils/auth";
 import Token from "../models/Token";
 import { generateToken } from "../utils/token";
 import { AuthEmail } from "../emails/AuthEmail";
+import { generateJWT } from "../utils/jwt";
 
 export class AuthController {
   static createAccount = async (req: Request, res: Response) => {
@@ -84,7 +85,8 @@ export class AuthController {
         res.status(400).json({ message: "La cuenta no ha sido confirmada, hemos enviado el token de validación a su email" });
         return;
       }
-      res.status(201).json("Usuario autenticado");
+      const jwt = generateJWT({ id: userExists.id })
+      res.json(jwt);
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
     }

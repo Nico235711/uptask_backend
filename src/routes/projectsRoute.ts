@@ -5,11 +5,13 @@ import { TaskController } from "../controllers/TaskController";
 import { handleInputErrors } from "../middleware/validation";
 import { projectExists } from "../middleware/projects";
 import { taskBelongsToProject, taskExists } from "../middleware/tasks";
+import { authenticate } from "../middleware/auth";
 
 const router = Router()
 
 // ===== Projects Route =====
 router.post("/", 
+  authenticate,
   body("projectName")
     .notEmpty().withMessage("El nombre del proyecto no puede ir vacío"),
   body("clientName")
