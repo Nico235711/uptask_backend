@@ -25,11 +25,11 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
       if (user) {
         req.user = user
       } else {
-        res.status(500).json({ error: "Toke no válido" })
+        res.status(500).json({ error: "Token no válido" })
       }
     }
   } catch (error) {
-    res.status(500).json({ error: "Toke no válido" })
+    res.status(500).json({ error: "Token no válido" })
   }
   next()
 }

@@ -10,8 +10,9 @@ import { authenticate } from "../middleware/auth";
 const router = Router()
 
 // ===== Projects Route =====
-router.post("/", 
-  authenticate,
+router.use(authenticate)
+
+router.post("/",
   body("projectName")
     .notEmpty().withMessage("El nombre del proyecto no puede ir vacío"),
   body("clientName")
@@ -24,13 +25,13 @@ router.post("/",
 
 router.get("/", ProjectController.getAllProjects)
 
-router.get("/:id", 
+router.get("/:id",
   param("id").isMongoId().withMessage("ID no válido"),
   handleInputErrors,
   ProjectController.getProjectById
 )
 
-router.put("/:id", 
+router.put("/:id",
   param("id").isMongoId().withMessage("ID no válido"),
   body("projectName")
     .notEmpty().withMessage("El nombre del proyecto no puede ir vacío"),
@@ -42,7 +43,7 @@ router.put("/:id",
   ProjectController.udpateProjectById
 )
 
-router.delete("/:id", 
+router.delete("/:id",
   param("id").isMongoId().withMessage("ID no válido"),
   handleInputErrors,
   ProjectController.deleteProjectById
@@ -53,7 +54,7 @@ router.param("projectID", projectExists)
 router.param("taskID", taskExists)
 router.param("taskID", taskBelongsToProject)
 
-router.post("/:projectID/tasks", 
+router.post("/:projectID/tasks",
   body("taskName")
     .notEmpty().withMessage("El nombre de la tarea no puede ir vacío"),
   body("description")
@@ -62,23 +63,23 @@ router.post("/:projectID/tasks",
   TaskController.createTask
 )
 
-router.post("/:projectID/tasks/:taskID/status", 
+router.post("/:projectID/tasks/:taskID/status",
   param("taskID").isMongoId().withMessage("ID no válido"),
   body("status")
-    .isIn([ "pending", "onHold", "inProgress", "underReview", "completed" ])
+    .isIn(["pending", "onHold", "inProgress", "underReview", "completed"])
     .withMessage("El estado de la tarea no es válido. Valores aceptados: pendiente, en espera, en progreso, en revisión, completada"),
   handleInputErrors,
   TaskController.updateTaskStatus
 )
 
 router.get("/:projectID/tasks", TaskController.getProjectTasks)
-router.get("/:projectID/tasks/:taskID", 
+router.get("/:projectID/tasks/:taskID",
   param("taskID").isMongoId().withMessage("ID no válido"),
   handleInputErrors,
   TaskController.getTaskById
 )
 
-router.put("/:projectID/tasks/:taskID", 
+router.put("/:projectID/tasks/:taskID",
   param("taskID").isMongoId().withMessage("ID no válido"),
   body("taskName")
     .notEmpty().withMessage("El nombre de la tarea no puede ir vacío"),
@@ -88,7 +89,7 @@ router.put("/:projectID/tasks/:taskID",
   TaskController.udpateTaskById
 )
 
-router.delete("/:projectID/tasks/:taskID", 
+router.delete("/:projectID/tasks/:taskID",
   param("taskID").isMongoId().withMessage("ID no válido"),
   handleInputErrors,
   TaskController.deleteTaskById

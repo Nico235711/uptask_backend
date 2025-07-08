@@ -170,10 +170,14 @@ export class AuthController {
         return;
       }
       user.password = await hashPassword(req.body.password)
-      await Promise.allSettled([ user.save(), tokenExists.deleteOne() ])
+      await Promise.allSettled([user.save(), tokenExists.deleteOne()])
       res.status(201).json("La contraseña ha sido actualizada");
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
     }
   };
+
+  static getUser = async (req: Request, res: Response) => {
+    res.status(200).json(req.user)
+  }
 }
