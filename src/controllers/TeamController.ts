@@ -15,8 +15,8 @@ export class TeamController {
   }
 
   static addTeamMemberById = async (req: Request, res: Response) => {
-    const { id } = req.body    
-    const user = await User.findById(id).select("id")
+    const { memberId } = req.body    
+    const user = await User.findById(memberId).select("id")
     if (!user) {
       res.status(404).json({ message: "Usuario no encontrado" })
       return
@@ -43,8 +43,8 @@ export class TeamController {
   }
 
   static deleteTeamMemberById = async (req: Request, res: Response) => {
-    const { id } = req.body
-    const user = await User.findById(id)
+    const { memberId } = req.params
+    const user = await User.findById(memberId)
     if (!user) {
       res.status(404).json({ message: "Usuario no encontrado" })
       return
@@ -53,7 +53,7 @@ export class TeamController {
       res.status(400).json({ message: "El usuario no existe" })
       return
     }
-    req.project.team = req.project.team.filter(member => member?.toString() !== id)
+    req.project.team = req.project.team.filter(member => member?.toString() !== memberId)
     await req.project.save()
     res.json("Usuario eliminado del equipo")
   }

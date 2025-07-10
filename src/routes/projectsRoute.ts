@@ -104,15 +104,15 @@ router.post("/:projectId/team/find",
 )
 
 router.post("/:projectId/team", 
-  body("id").isMongoId().withMessage("Id no válido"), 
+  body("memberId").isMongoId().withMessage("Id no válido"), 
   handleInputErrors,
   TeamController.addTeamMemberById
 )
 
 router.get("/:projectId/team", TeamController.getTeamMembers)
 
-router.delete("/:projectId/team", 
-  body("id").isMongoId().withMessage("Id no válido"), 
+router.delete("/:projectId/team/:memberId", 
+  param("memberId").isMongoId().withMessage("Id no válido"), 
   handleInputErrors,
   TeamController.deleteTeamMemberById
 )

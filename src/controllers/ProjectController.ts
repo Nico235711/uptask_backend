@@ -17,7 +17,8 @@ export class ProjectController {
     try {
       const projects = await Project.find({
         $or: [
-          { manager: req.user?.id }
+          { manager: req.user?.id },
+          { team: req.user?.id }
         ]
       })
       res.status(200).json({ data: projects })
@@ -34,7 +35,7 @@ export class ProjectController {
         res.status(404).json({ message: "Proyecto no encontrado" })
         return
       }
-      if (project.manager?.toString() !== req.user?.id.toString()) {
+      if (project.manager?.toString() !== req.user?.id.toString() && !project.team.includes(req.user?.id)) {
         res.status(401).json({ message: "No autorizado" })
         return
       }
