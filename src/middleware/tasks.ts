@@ -10,17 +10,12 @@ declare global {
   }
 }
 
-export const taskExists = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const taskExists = async (req: Request, res: Response,next: NextFunction) => {
   try {
     const { taskId } = req.params;
     const task = await Task.findById(taskId);
     if (!task) {
-      const error = new Error("Tarea no encontrada");
-      res.status(404).json({ error: error.message });
+      res.status(404).json({ message: "Tarea no encontrada" });
       return;
     }
     req.task = task;
@@ -30,17 +25,10 @@ export const taskExists = async (
   }
 };
 
-export const taskBelongsToProject = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const taskBelongsToProject = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { taskId } = req.params;
-    const task = await Task.findById(taskId);
     if (req.task.project.toString() !== req.project.id) {
-      const error = new Error("Acción no válida");
-      res.status(401).json({ error: error.message });
+      res.status(401).json({ message: "Acción no válida" });
       return;
     }
     next();

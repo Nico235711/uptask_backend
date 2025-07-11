@@ -3,7 +3,7 @@ import { body, param } from "express-validator";
 import { ProjectController } from "../controllers/ProjectController";
 import { TaskController } from "../controllers/TaskController";
 import { TeamController } from "../controllers/TeamController";
-import { authenticate } from "../middleware/auth";
+import { authenticate, hasAuthorization } from "../middleware/auth";
 import { projectExists } from "../middleware/projects";
 import { taskBelongsToProject, taskExists } from "../middleware/tasks";
 import { handleInputErrors } from "../middleware/validation";
@@ -14,6 +14,7 @@ const router = Router()
 router.use(authenticate)
 
 router.post("/",
+  hasAuthorization,
   body("projectName")
     .notEmpty().withMessage("El nombre del proyecto no puede ir vacío"),
   body("clientName")
@@ -33,6 +34,7 @@ router.get("/:id",
 )
 
 router.put("/:id",
+  hasAuthorization,
   param("id").isMongoId().withMessage("ID no válido"),
   body("projectName")
     .notEmpty().withMessage("El nombre del proyecto no puede ir vacío"),
@@ -45,6 +47,7 @@ router.put("/:id",
 )
 
 router.delete("/:id",
+  hasAuthorization,
   param("id").isMongoId().withMessage("ID no válido"),
   handleInputErrors,
   ProjectController.deleteProjectById
@@ -56,6 +59,7 @@ router.param("taskId", taskExists)
 router.param("taskId", taskBelongsToProject)
 
 router.post("/:projectId/tasks",
+  hasAuthorization,
   body("taskName")
     .notEmpty().withMessage("El nombre de la tarea no puede ir vacío"),
   body("description")
@@ -81,6 +85,7 @@ router.get("/:projectId/tasks/:taskId",
 )
 
 router.put("/:projectId/tasks/:taskId",
+  hasAuthorization,
   param("taskId").isMongoId().withMessage("ID no válido"),
   body("taskName")
     .notEmpty().withMessage("El nombre de la tarea no puede ir vacío"),
@@ -91,6 +96,7 @@ router.put("/:projectId/tasks/:taskId",
 )
 
 router.delete("/:projectId/tasks/:taskId",
+  hasAuthorization,
   param("taskId").isMongoId().withMessage("ID no válido"),
   handleInputErrors,
   TaskController.deleteTaskById

@@ -33,3 +33,15 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
   }
   next()
 }
+
+export const hasAuthorization = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (req.user?.id.toString() !== req.project.manager?.toString()) {
+      res.status(401).json({ message: "Acción no válida" });
+      return;
+    }
+    next();
+  } catch (error) {
+    res.status(500).json({ message: "Hubo un error" });
+  }
+};

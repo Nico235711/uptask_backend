@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import Task from "../models/Task";
 
+const PENDING = "pending"
+
 export class TaskController {
   static createTask = async (req: Request, res: Response) => {
     try {
@@ -18,6 +20,11 @@ export class TaskController {
     try {
       const { status } = req.body
       req.task.status = status
+      if (status === PENDING) {
+        req.task.set({ completedBy: null })
+      } else {
+        req.task.completedBy = req.user?.id
+      }
       await req.task.save()
       res.status(201).json("Estado de la tarea actualizado");
     } catch (error) {
@@ -38,7 +45,9 @@ export class TaskController {
 
   static getTaskById = async (req: Request, res: Response) => {
     try {
-      res.status(200).json({ data: req.task });
+      const task = await Task.findById(req.task.id)
+        .populate({ path: "completedBy", select: "id name email" })
+      res.status(200).json({ data: task });
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
     }
