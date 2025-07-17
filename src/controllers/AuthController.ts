@@ -47,8 +47,7 @@ export class AuthController {
       }
       const user = await User.findById(tokenExists.user);
       if (!user) {
-        const error = new Error("Usuario no encontrado");
-        res.status(404).json({ error: error.message });
+        res.status(404).json({ message: "Usuario no encontrado" });
         return;
       }
       user.confirmed = true;
@@ -156,7 +155,7 @@ export class AuthController {
     }
   };
 
-  static updatedPasswordWithToken = async (req: Request, res: Response) => {
+  static updatePasswordWithToken = async (req: Request, res: Response) => {
     try {
       const { token } = req.params;
       const tokenExists = await Token.findOne({ token });
@@ -179,5 +178,43 @@ export class AuthController {
 
   static getUser = async (req: Request, res: Response) => {
     res.status(200).json(req.user)
+  }
+
+  static updateProfile = async (req: Request, res: Response) => {
+    const { name, email } = req.body
+    const userExists = await User.findOne({ email })
+    if (userExists && userExists.id.toString() === req.user.id.toString()) {
+      res.status(409).json({ message: "El email ya esta en uso" })
+      return
+    }
+    req.user.name = name
+    req.user.email = email
+    try {
+      await req.user.save()
+      res.status(200).json("Perfil actualizado")
+    } catch (error) {
+      res.status(500).json({ error: "Hubo un error" })
+    }
+  }
+
+  static updateCurrentPassword = async (req: Request, res: Response) => {
+    const { current_password, password } = req.body
+    const user = await User.findById(req.user.id)
+    if (!user) {
+      res.status(400).json({ message: "El usuario no existe" });
+      return;
+    }
+    const isCorrectPassword = await comparePassword(current_password, user.password)
+    if (!isCorrectPassword) {
+      res.status(400).json({ message: "La contraseña es incorrecta" });
+      return;
+    }
+    try {
+      user.password = await hashPassword(password)
+      await user.save()
+      res.status(200).json("Contraseña actualizada")
+    } catch (error) {
+      res.status(500).json({ error: "Hubo un error" })
+    }
   }
 }

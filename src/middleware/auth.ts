@@ -6,7 +6,7 @@ import User, { IUser } from "../models/User";
 declare global {
   namespace Express {
     interface Request {
-      user?: IUser;
+      user: IUser;
     }
   }
 }
@@ -36,7 +36,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 
 export const hasAuthorization = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    if (req.user?.id.toString() !== req.project.manager?.toString()) {
+    if (req.user.id.toString() !== req.project.manager?.toString()) {
       res.status(401).json({ message: "Acción no válida" });
       return;
     }

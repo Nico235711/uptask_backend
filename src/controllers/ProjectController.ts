@@ -5,7 +5,7 @@ export class ProjectController {
   static createProject = async (req: Request, res: Response) => {
     try {
       const project = new Project(req.body)
-      project.manager = req.user?.id
+      project.manager = req.user.id
       await project.save()
       res.status(201).json("Projecto creado")
     } catch (error) {
@@ -17,8 +17,8 @@ export class ProjectController {
     try {
       const projects = await Project.find({
         $or: [
-          { manager: req.user?.id },
-          { team: req.user?.id }
+          { manager: req.user.id },
+          { team: req.user.id }
         ]
       })
       res.status(200).json({ data: projects })
@@ -35,7 +35,7 @@ export class ProjectController {
         res.status(404).json({ message: "Proyecto no encontrado" })
         return
       }
-      if (project.manager?.toString() !== req.user?.id.toString() && !project.team.includes(req.user?.id)) {
+      if (project.manager?.toString() !== req.user.id.toString() && !project.team.includes(req.user.id)) {
         res.status(401).json({ message: "No autorizado" })
         return
       }
@@ -53,7 +53,7 @@ export class ProjectController {
         res.status(404).json({ message: "Proyecto no encontrado" })
         return
       }
-      if (project.manager?.toString() !== req.user?.id.toString()) {
+      if (project.manager?.toString() !== req.user.id.toString()) {
         res.status(401).json({ message: "Solo el manager puede actualizar el proyecto" })
         return
       }
@@ -75,7 +75,7 @@ export class ProjectController {
         res.status(404).json({ message: "Proyecto no encontrado" })
         return
       }
-      if (project.manager?.toString() !== req.user?.id.toString()) {
+      if (project.manager?.toString() !== req.user.id.toString()) {
         res.status(401).json({ message: "Solo el manager puede eliminar el proyecto" })
         return
       }

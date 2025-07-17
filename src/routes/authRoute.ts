@@ -60,7 +60,7 @@ router.post("/update-password/:token",
     .custom((value, { req }) => value === req.body.password)
     .withMessage("Las contraseñas no coiciden"),
   handleInputErrors,
-  AuthController.updatedPasswordWithToken
+  AuthController.updatePasswordWithToken
 );
 
 router.get("/user",
@@ -68,4 +68,27 @@ router.get("/user",
   AuthController.getUser
 );
 
+// === Profile ===
+router.put("/profile",
+  authenticate,
+  body("email").isEmail().withMessage("Formato de email no válido"),
+  body("name").notEmpty().withMessage("El nombre del usuario es obligatorio"),
+  handleInputErrors,
+  AuthController.updateProfile
+)
+
+router.post("/update-password",
+  authenticate,
+  body("current_password")
+    .notEmpty()
+    .withMessage("La contraseña actual no puede ir vacía"),
+  body("password")
+    .isLength({ min: 8 })
+    .withMessage("La contraseña debe tener al menos 8 caracteres"),
+  body("password_confirmation")
+    .custom((value, { req }) => value === req.body.password)
+    .withMessage("Las contraseñas no coiciden"),
+  handleInputErrors,
+  AuthController.updateCurrentPassword
+);
 export default router;

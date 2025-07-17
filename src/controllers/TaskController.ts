@@ -21,7 +21,7 @@ export class TaskController {
       const { status } = req.body
       req.task.status = status
       const data = {
-        user: req.user?.id,
+        user: req.user.id,
         status
       }
       req.task.completedBy.push(data)

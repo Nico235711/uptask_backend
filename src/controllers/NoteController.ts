@@ -5,7 +5,7 @@ export class NoteController {
   static createNote = async (req: Request, res: Response) => {
     try {
       const note = new Note(req.body)
-      note.createdBy = req.user?.id
+      note.createdBy = req.user.id
       note.task = req.task.id
       req.task.notes.push(note.id)
       await Promise.allSettled([note.save(), req.task.save()])
@@ -32,7 +32,7 @@ export class NoteController {
         res.status(404).json({ message: "Nota no encontrada" })
         return
       }
-      if (note.createdBy.toString() !== req.user?.id.toString()) {
+      if (note.createdBy.toString() !== req.user.id.toString()) {
         res.status(401).json({ message: "Solo el creador puede eliminar la nota" })
         return
       }
