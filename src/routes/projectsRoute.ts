@@ -15,7 +15,7 @@ const router = Router()
 router.use(authenticate)
 
 router.post("/",
-  hasAuthorization,
+  // hasAuthorization,
   body("projectName")
     .notEmpty().withMessage("El nombre del proyecto no puede ir vacío"),
   body("clientName")
@@ -28,15 +28,15 @@ router.post("/",
 
 router.get("/", ProjectController.getAllProjects)
 
-router.get("/:id",
-  param("id").isMongoId().withMessage("ID no válido"),
+router.get("/:projectId",
+  param("projectId").isMongoId().withMessage("ID no válido"),
   handleInputErrors,
   ProjectController.getProjectById
 )
 
-router.put("/:id",
+router.put("/:projectId",
   hasAuthorization,
-  param("id").isMongoId().withMessage("ID no válido"),
+  param("projectId").isMongoId().withMessage("ID no válido"),
   body("projectName")
     .notEmpty().withMessage("El nombre del proyecto no puede ir vacío"),
   body("clientName")
@@ -47,9 +47,9 @@ router.put("/:id",
   ProjectController.udpateProjectById
 )
 
-router.delete("/:id",
+router.delete("/:projectId",
   hasAuthorization,
-  param("id").isMongoId().withMessage("ID no válido"),
+  param("projectId").isMongoId().withMessage("ID no válido"),
   handleInputErrors,
   ProjectController.deleteProjectById
 )

@@ -217,4 +217,19 @@ export class AuthController {
       res.status(500).json({ error: "Hubo un error" })
     }
   }
+
+  static checkPassword = async (req: Request, res: Response) => {
+    const { password } = req.body
+    const user = await User.findById(req.user.id)
+    if (!user) {
+      res.status(400).json({ message: "El usuario no existe" });
+      return;
+    }
+    const isCorrectPassword = await comparePassword(password, user.password)
+    if (!isCorrectPassword) {
+      res.status(400).json({ message: "La contraseña es incorrecta" });
+      return;
+    }
+    res.status(200).json("Contraseña correcta")
+  }
 }
