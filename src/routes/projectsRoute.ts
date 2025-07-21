@@ -15,7 +15,6 @@ const router = Router()
 router.use(authenticate)
 
 router.post("/",
-  // hasAuthorization,
   body("projectName")
     .notEmpty().withMessage("El nombre del proyecto no puede ir vacío"),
   body("clientName")
@@ -27,6 +26,8 @@ router.post("/",
 )
 
 router.get("/", ProjectController.getAllProjects)
+
+router.param("projectId", projectExists)
 
 router.get("/:projectId",
   param("projectId").isMongoId().withMessage("ID no válido"),
@@ -55,7 +56,6 @@ router.delete("/:projectId",
 )
 
 // ===== Tasks Route =====
-router.param("projectId", projectExists)
 router.param("taskId", taskExists)
 router.param("taskId", taskBelongsToProject)
 
