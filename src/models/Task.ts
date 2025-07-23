@@ -1,4 +1,5 @@
 import { Document, model, Schema, Types } from "mongoose"
+import Note from "./Note";
 
 const taskStatus = {
   PENDING: "pending",
@@ -63,5 +64,12 @@ const taskSchema: Schema = new Schema({
     }
   ]
 }, { timestamps: true })
+
+taskSchema.pre("deleteOne", {document: true}, async function() {
+  const taskId = this._id
+  if (!taskId) return
+  await Note.deleteMany({task: taskId})
+})
+
 const Task = model<ITask>("Task", taskSchema)
 export default Task
