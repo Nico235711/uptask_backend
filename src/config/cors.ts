@@ -1,5 +1,5 @@
-import { CorsOptions } from 'cors';
 import dotenv from 'dotenv';
+import { CorsOptions } from 'cors';
 dotenv.config();
 
 export const corsConfig: CorsOptions = {
